@@ -1,5 +1,5 @@
-namespaces DocumentManagement.Domain.Entities.Documents
-{
+
+
     public class Document
     {
         public Guid Key {get; set;}
@@ -7,4 +7,3 @@ namespaces DocumentManagement.Domain.Entities.Documents
         public string FileUrl {get; set;}
     }
 
-}
