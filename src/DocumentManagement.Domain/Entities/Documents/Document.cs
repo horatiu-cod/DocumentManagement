@@ -1,5 +1,5 @@
-namespaces DocumentManagement.Domain.Entities.Documents{
-
+namespaces DocumentManagement.Domain.Entities.Documents
+{
     public class Document
     {
         public Guid Key {get; set;}
