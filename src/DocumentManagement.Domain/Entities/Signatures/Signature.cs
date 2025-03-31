@@ -1,0 +1,17 @@
+﻿using DocumentManagement.Domain.Entities.Documents;
+using DocumentManagement.Domain.Entities.Persons;
+
+namespace DocumentManagement.Domain.Entities.Signatures;
+
+public class Signature
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTime IssuedAt { get; set; }
+    public bool IsValid { get; set; }
+
+    public Guid IssuedBy { get; set; }
+    public required Person Person { get; set; }
+
+    public Guid IssuedFor { get; set; }
+    public required Document Document { get; set; }
+}
