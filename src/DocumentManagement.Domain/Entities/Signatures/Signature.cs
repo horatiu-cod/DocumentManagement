@@ -1,5 +1,5 @@
 ﻿using DocumentManagement.Domain.Entities.Documents;
-using DocumentManagement.Domain.Entities.Persons;
+using DocumentManagement.Domain.Entities.Employees;
 
 namespace DocumentManagement.Domain.Entities.Signatures;
 
@@ -10,7 +10,7 @@ public class Signature
     public bool IsValid { get; set; }
 
     public Guid IssuedBy { get; set; }
-    public required Person Person { get; set; }
+    public required Employee Employee { get; set; }
 
     public Guid IssuedFor { get; set; }
     public required Document Document { get; set; }

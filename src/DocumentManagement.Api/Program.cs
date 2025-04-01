@@ -31,15 +31,13 @@ var encryptionKey = Encoding.UTF8.GetBytes(config["EncryptionKey"] ?? "123456789
 
 static async Task EncryptAndSaveFileAsync(IFormFile file, string filePath, byte[] key)
 {
-    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-    using (var aes = Aes.Create())
-    {
-        aes.Key = key;
-        aes.GenerateIV();
-        await fileStream.WriteAsync(aes.IV, 0, aes.IV.Length);
-        using var cryptoStream = new CryptoStream(fileStream, aes.CreateEncryptor(), CryptoStreamMode.Write);
-        await file.CopyToAsync(cryptoStream);
-    }
+    using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+    using var aes = Aes.Create();
+    aes.Key = key;
+    aes.GenerateIV();
+    await fileStream.WriteAsync(aes.IV.AsMemory(0, aes.IV.Length));
+    using var cryptoStream = new CryptoStream(fileStream, aes.CreateEncryptor(), CryptoStreamMode.Write);
+    await file.CopyToAsync(cryptoStream);
 }
 
 static async Task<FileStream> DecryptFileAsync(string filePath, byte[] key)
@@ -86,7 +84,7 @@ app.Run();
 
 
 // Helper class to ensure streams are disposed properly
-class CryptoStreamWrapper(CryptoStream cryptoStream, FileStream fileStream) : FileStream(fileStream.Name, fileStream.Mode, fileStream.Access)
+class CryptoStreamWrapper(CryptoStream cryptoStream, FileStream fileStream) : FileStream(fileStream.SafeFileHandle, FileAccess.Read)
 {
     private readonly CryptoStream _cryptoStream = cryptoStream;
 

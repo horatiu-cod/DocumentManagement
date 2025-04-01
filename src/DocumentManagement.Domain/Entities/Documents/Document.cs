@@ -1,4 +1,4 @@
-using DocumentManagement.Domain.Entities.Persons;
+using DocumentManagement.Domain.Entities.Employees;
 using DocumentManagement.Domain.Entities.Signatures;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,6 +15,6 @@ public class Document
     public DateTimeOffset DeletedAt { get; set; }
     public ICollection<Signature>? Signatures { get; set; }
     public Guid CreatedBy {get; set;}
-    public required Person Person { get; set;}
+    public required Employee Employee { get; set;}
 }
 

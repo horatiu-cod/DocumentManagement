@@ -1,9 +1,9 @@
 ﻿using DocumentManagement.Domain.Entities.Documents;
 using DocumentManagement.Domain.Entities.Signatures;
 
-namespace DocumentManagement.Domain.Entities.Persons;
+namespace DocumentManagement.Domain.Entities.Employees;
 
-public class Person
+public class Employee
 {
     public Guid Id { get; set; }
     public required string Email { get; set; }

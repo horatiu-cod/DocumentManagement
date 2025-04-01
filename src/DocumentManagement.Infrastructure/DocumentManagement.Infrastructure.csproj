@@ -23,8 +23,4 @@
     <ProjectReference Include="..\DocumentManagement.Application\DocumentManagement.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataAccess\Repository\" />
-  </ItemGroup>
-
 </Project>
