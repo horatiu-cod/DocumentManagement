@@ -21,6 +21,10 @@ public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : 
             .IsRequired()
             .OnDelete( DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Document>()
+            .Property(d => d.RowVersion)
+            .IsRowVersion();
+
         modelBuilder.Entity<Employee>()
             .HasMany(u => u.Signatures)
             .WithOne(s => s.Employee)
@@ -29,11 +33,11 @@ public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : 
         modelBuilder.Entity<Employee>()
             .HasMany(u => u.Documents)
             .WithOne(d => d.Employee)
-            .HasForeignKey(d => d.CreatedBy)
+            .HasForeignKey(d => d.OwnerId)
             .IsRequired();
 
         base.OnModelCreating(modelBuilder);
     }
 
-    public async Task CommitChangesAsync(CancellationToken cancellationToken) => await SaveChangesAsync(cancellationToken);
+    public async Task CommitChangesAsync(CancellationToken cancellationToken = default) => await SaveChangesAsync(cancellationToken);
 }

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Features\Documents\Upload\" />
   </ItemGroup>
 
 </Project>
