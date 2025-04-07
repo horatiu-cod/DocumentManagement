@@ -86,13 +86,32 @@ app.MapGet("/list", () =>
 {
     X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
 
-    store.Open(OpenFlags.ReadOnly);
-    X509Certificate2Collection col = store.Certificates;
+    store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
 
-    var localMachineStore = new X509Store("MY", StoreLocation.LocalMachine);
-    localMachineStore.Open(OpenFlags.ReadOnly);
-    var certificates = localMachineStore.Certificates;
-    localMachineStore.Close();
+    X509Certificate2Collection collection = store.Certificates;
+    X509Certificate2Collection fcollection = collection.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
+    X509Certificate2Collection scollection = X509Certificate2UI.SelectFromCollection(fcollection, "Test Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.MultiSelection);
+
+    foreach (X509Certificate2 x509 in fcollection)
+    {
+        var rawdata = x509.RawData;
+        Console.WriteLine($"Subject: {x509.Subject}");
+        Console.WriteLine($"Issuer: {x509.IssuerName}");
+        Console.WriteLine($"Valid From: {x509.NotBefore}");
+        Console.WriteLine($"Valid To: {x509.NotAfter}");
+        Console.WriteLine($"Thumbprint: {x509.Thumbprint}");
+        Console.WriteLine();
+        Console.WriteLine("Content Type: {0}{1}", X509Certificate2.GetCertContentType(rawdata), Environment.NewLine);
+        Console.WriteLine("Friendly Name: {0}{1}", x509.FriendlyName, Environment.NewLine);
+        Console.WriteLine("Certificate Verified?: {0}{1}", x509.Verify(), Environment.NewLine);
+        Console.WriteLine("Simple Name: {0}{1}", x509.GetNameInfo(X509NameType.SimpleName, true), Environment.NewLine);
+        Console.WriteLine("Signature Algorithm: {0}{1}", x509.SignatureAlgorithm.FriendlyName, Environment.NewLine);
+        Console.WriteLine("Certificate Archived?: {0}{1}", x509.Archived, Environment.NewLine);
+        Console.WriteLine("Length of Raw Data: {0}{1}", x509.RawData.Length, Environment.NewLine);
+        X509Certificate2UI.DisplayCertificate(x509);
+        //x509.Reset();
+    }
+    store.Close();
     return Results.Ok();
 });
 
