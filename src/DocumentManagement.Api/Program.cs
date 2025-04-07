@@ -1,4 +1,6 @@
+using System.Security.AccessControl;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,6 +80,20 @@ app.MapGet("/download/{fileName}", async (string fileName) =>
 
     var decryptedStream = await DecryptFileAsync(filePath, encryptionKey);
     return Results.File(decryptedStream, "application/octet-stream", fileName);
+});
+
+app.MapGet("/list", () => 
+{
+    X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
+
+    store.Open(OpenFlags.ReadOnly);
+    X509Certificate2Collection col = store.Certificates;
+
+    var localMachineStore = new X509Store("MY", StoreLocation.LocalMachine);
+    localMachineStore.Open(OpenFlags.ReadOnly);
+    var certificates = localMachineStore.Certificates;
+    localMachineStore.Close();
+    return Results.Ok();
 });
 
 app.Run();
