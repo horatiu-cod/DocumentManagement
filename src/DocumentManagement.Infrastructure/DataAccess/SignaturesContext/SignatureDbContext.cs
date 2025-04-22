@@ -4,40 +4,41 @@ using DocumentManagement.Domain.Entities.Employees;
 using DocumentManagement.Domain.Entities.Signatures;
 using Microsoft.EntityFrameworkCore;
 
-namespace DocumentManagement.Infrastructure.DataAccess.SignaturesContext;
-
-public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : DbContext(options), IUnitOfWork
+namespace DocumentManagement.Infrastructure.DataAccess.SignaturesContext
 {
-    public DbSet<Document> Documents { get; set; }
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<Signature> Signatures { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : DbContext(options), IUnitOfWork
     {
-        modelBuilder.Entity<Document>()
-            .HasMany(u => u.Signatures)
-            .WithOne(u => u.Document)
-            .HasForeignKey(s => s.IssuedFor)
-            .IsRequired()
-            .OnDelete( DeleteBehavior.Cascade);
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Signature> Signatures { get; set; }
 
-        modelBuilder.Entity<Document>()
-            .Property(d => d.RowVersion)
-            .IsRowVersion();
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Document>()
+                .HasMany(u => u.Signatures)
+                .WithOne(u => u.Document)
+                .HasForeignKey(s => s.IssuedFor)
+                .IsRequired()
+                .OnDelete( DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Employee>()
-            .HasMany(u => u.Signatures)
-            .WithOne(s => s.Employee)
-            .HasForeignKey(s => s.IssuedBy);
+            modelBuilder.Entity<Document>()
+                .Property(d => d.RowVersion)
+                .IsRowVersion();
 
-        modelBuilder.Entity<Employee>()
-            .HasMany(u => u.Documents)
-            .WithOne(d => d.Employee)
-            .HasForeignKey(d => d.OwnerId)
-            .IsRequired();
+            modelBuilder.Entity<Employee>()
+                .HasMany(u => u.Signatures)
+                .WithOne(s => s.Employee)
+                .HasForeignKey(s => s.IssuedBy);
 
-        base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Employee>()
+                .HasMany(u => u.Documents)
+                .WithOne(d => d.Employee)
+                .HasForeignKey(d => d.OwnerId)
+                .IsRequired();
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        public async Task CommitChangesAsync(CancellationToken cancellationToken = default) => await SaveChangesAsync(cancellationToken);
     }
-
-    public async Task CommitChangesAsync(CancellationToken cancellationToken = default) => await SaveChangesAsync(cancellationToken);
 }

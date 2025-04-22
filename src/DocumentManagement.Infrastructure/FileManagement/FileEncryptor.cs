@@ -1,5 +1,6 @@
-﻿namespace DocumentManagement.Infrastructure.FileManagement;
-
-internal class FileEncryptor
+﻿namespace DocumentManagement.Infrastructure.FileManagement
 {
+    internal class FileEncryptor
+    {
+    }
 }

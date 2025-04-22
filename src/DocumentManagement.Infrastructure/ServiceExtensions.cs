@@ -5,20 +5,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DocumentManagement.Infrastructure;
-
-public static class ServiceExtensions
+namespace DocumentManagement.Infrastructure
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string connection)
+    public static class ServiceExtensions
     {
-        ArgumentNullException.ThrowIfNull(connection);
-
-        services.AddDbContext<SignatureDbContext>(options =>
+        public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string connection)
         {
-            options.UseSqlServer(configuration.GetConnectionString(connection));
-        });
-        services.AddScoped<IDocumentRepository, DocumentRepository>();
-        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-        services.AddScoped<ISignatureRepository, SignatureRepository>();
+            ArgumentNullException.ThrowIfNull(connection);
+
+            services.AddDbContext<SignatureDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString(connection));
+            });
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ISignatureRepository, SignatureRepository>();
+        }
     }
 }
