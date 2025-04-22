@@ -82,21 +82,59 @@ app.MapGet("/download/{fileName}", async (string fileName) =>
     return Results.File(decryptedStream, "application/octet-stream", fileName);
 });
 
+app.MapGet("/listall", () => 
+{
+   string domain = Environment.UserDomainName;
+string userName = Environment.UserName;
+string currentUser = $"{domain}\\{userName}";
+Console.WriteLine("Current User: " + currentUser);
+
+
+     Console.WriteLine("\r\nExists Certs Name and Location");
+        Console.WriteLine("------ ----- -------------------------");
+
+        foreach (StoreLocation storeLocation in (StoreLocation[])
+            Enum.GetValues(typeof(StoreLocation)))
+        {
+            foreach (StoreName storeName in (StoreName[])
+                Enum.GetValues(typeof(StoreName)))
+            {
+                X509Store store = new X509Store(storeName, storeLocation);
+
+                try
+                {
+                    store.Open(OpenFlags.OpenExistingOnly);
+
+                    Console.WriteLine("Yes    {0,4}  {1}, {2}",
+                        store.Certificates.Count, store.Name, store.Location);
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine("No           {0}, {1}",
+                        store.Name, store.Location);
+                }
+            }
+            Console.WriteLine();
+        }
+    //store.Close();
+    return Results.Ok();
+});
+
 app.MapGet("/list", () => 
 {
-    X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
+    X509Store store = new X509Store( StoreName.My, StoreLocation.CurrentUser);
 
     store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
 
     X509Certificate2Collection collection = store.Certificates;
     X509Certificate2Collection fcollection = collection.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
-    X509Certificate2Collection scollection = X509Certificate2UI.SelectFromCollection(fcollection, "Test Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.MultiSelection);
+    //X509Certificate2Collection scollection = X509Certificate2UI.SelectFromCollection(fcollection, "Test Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.MultiSelection);
 
     foreach (X509Certificate2 x509 in fcollection)
     {
         var rawdata = x509.RawData;
         Console.WriteLine($"Subject: {x509.Subject}");
-        Console.WriteLine($"Issuer: {x509.IssuerName}");
+        Console.WriteLine($"Issuer: {x509.Issuer}");
         Console.WriteLine($"Valid From: {x509.NotBefore}");
         Console.WriteLine($"Valid To: {x509.NotAfter}");
         Console.WriteLine($"Thumbprint: {x509.Thumbprint}");
@@ -108,7 +146,7 @@ app.MapGet("/list", () =>
         Console.WriteLine("Signature Algorithm: {0}{1}", x509.SignatureAlgorithm.FriendlyName, Environment.NewLine);
         Console.WriteLine("Certificate Archived?: {0}{1}", x509.Archived, Environment.NewLine);
         Console.WriteLine("Length of Raw Data: {0}{1}", x509.RawData.Length, Environment.NewLine);
-        X509Certificate2UI.DisplayCertificate(x509);
+        //X509Certificate2UI.DisplayCertificate(x509);
         //x509.Reset();
     }
     store.Close();
