@@ -4,9 +4,9 @@ namespace DocumentManagement.Application.Interfaces;
 
 public interface IDocumentRepository
 {
-    Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-    Task<List<Document>> GetAllAsync(CancellationToken cancellationToken);
-    Task AddAsync(Document entity);
-    Task UpdateAsync(Document entity);
+    Task<DocumentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<List<DocumentEntity>> GetAllAsync(CancellationToken cancellationToken);
+    Task AddAsync(DocumentEntity entity);
+    Task UpdateAsync(DocumentEntity entity);
     Task DeleteAsync(Guid id);
 }

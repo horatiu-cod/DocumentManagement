@@ -9,7 +9,7 @@ namespace DocumentManagement.Infrastructure.DataAccess.Repository
     {
         private readonly SignatureDbContext _context = context;
 
-        public async Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<DocumentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Documents.Include(x => x.Employee).Include(x => x.Signatures).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
