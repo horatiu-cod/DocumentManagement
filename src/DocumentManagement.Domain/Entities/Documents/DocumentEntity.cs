@@ -3,7 +3,7 @@ using DocumentManagement.Domain.Entities.Signatures;
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentManagement.Domain.Entities.Documents;
-public class Document
+public class DocumentEntity
 {
     public Guid Id {get; set;} = Guid.NewGuid();
     public required string FileName {get; set;}
