@@ -8,20 +8,20 @@ namespace DocumentManagement.Infrastructure.DataAccess.SignaturesContext
 {
     public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : DbContext(options), IUnitOfWork
     {
-        public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentEntity> Documents { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Signature> Signatures { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<DocumentEntity>()
                 .HasMany(u => u.Signatures)
                 .WithOne(u => u.Document)
                 .HasForeignKey(s => s.IssuedFor)
                 .IsRequired()
                 .OnDelete( DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<DocumentEntity>()
                 .Property(d => d.RowVersion)
                 .IsRowVersion();
 

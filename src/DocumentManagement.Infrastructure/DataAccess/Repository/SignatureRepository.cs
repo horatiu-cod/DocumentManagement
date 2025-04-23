@@ -27,6 +27,7 @@ namespace DocumentManagement.Infrastructure.DataAccess.Repository
         public async Task UpdateAsync(Signature entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
+            await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(Guid id)
