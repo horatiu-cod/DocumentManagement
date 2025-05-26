@@ -15,8 +15,11 @@ public sealed class AdresaService : IAdresaService
     }
 
     // Metode Owner
-    public Task<Adresa> CreazaAdresaAsync(Giud ownerId)
+    public async Task<Adresa> CreazaAdresaAsync(Giud ownerId)
     {
         var adresa = new Adresa (OwnerId = ownerId);
+        await _adrese.AddAsync(adresa);
+
+        _logger.LogInformation($"Adresa {adresa.Id} ")
     }
 }
