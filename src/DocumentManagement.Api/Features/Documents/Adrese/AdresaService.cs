@@ -1,0 +1,22 @@
+
+
+namespace DocumentManagement.Api.Features.Documents.Adrese;
+
+public sealed class AdresaService : IAdresaService
+{
+    private readonly ILogger<DocumentsController> _logger;
+    //Simuleaza o baza de date sau un repository
+    private List<Adresa> _adrese;
+
+    public AdresaService(ILogger<DocumentsController> logger)
+    {
+        _logger = logger;
+        _adrese = new List<Adresa>();
+    }
+
+    // Metode Owner
+    public Task<Adresa> CreazaAdresaAsync(Giud ownerId)
+    {
+        var adresa = new Adresa (OwnerId = ownerId);
+    }
+}
