@@ -20,6 +20,21 @@ public sealed class AdresaService : IAdresaService
         var adresa = new Adresa (OwnerId = ownerId);
         await _adrese.AddAsync(adresa);
 
-        _logger.LogInformation($"Adresa {adresa.Id} ")
+        _logger.LogInformation($"Adresa {adresa.Id} a fost creata de owner-ul {ownerId}")
     }
+
+    public async Task<bool> SemneazaAdresaOwnerAsync(Giud adresaId, Giud ownerId)
+    {
+        var adresa = _adrese.FirstOrDefault(a => a.Id == adresaId && a.OwnerId == ownerId);
+
+        if (adresa == null)
+        {
+            _logger.LogError($"Erroare: Adresa {adresaId} nu este gasita sau nu apartine owner-ului {ownerId}");
+            return false;
+        }
+
+        if (adresa.Status != AdresaStatus.Creat)
+
+    }
+
 }
