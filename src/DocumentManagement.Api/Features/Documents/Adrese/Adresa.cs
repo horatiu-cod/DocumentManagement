@@ -3,7 +3,7 @@ namespace DocumentManagement.Api.Features.Documents.Adrese;
 public sealed class Adresa
 {
  public Guid Id {get; set;}
- public bool InEditare {get; set;}
+ public bool Editable {get; set;}
  public Guid OwnerId {get; set;}
  public DateTimeOffset CreatedAt {get; set;}
  public bool SemnatOwner {get; set;}
@@ -25,7 +25,7 @@ public sealed class Adresa
  public Adresa()
  {
     Id = Guid.NewGuid();
-    InEditare = true;
+    Editable = true;
     CreatedAt = DateTime.Now;
     Status = StatusAdresa.Creat;
     SemnatOwner = false;
@@ -48,5 +48,6 @@ public enum StatusAdresa
     TransmisAprobare,
     InAprobare,
     Aprobat,
+    TransmisOwner,
     Respins
 }
