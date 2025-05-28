@@ -1,6 +1,6 @@
 namespace DocumentManagement.Api.Features.Documents.Adrese;
 
-internal sealed class Adresa
+public sealed class Adresa
 {
  public Guid Id {get; set;}
  public bool InEditare {get; set;}
@@ -36,7 +36,7 @@ internal sealed class Adresa
  
 }
 
-internal enum StatusAdresa
+public enum StatusAdresa
 {
     Creat,
     TransmisVerificare,

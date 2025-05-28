@@ -1,40 +1,44 @@
-
+using System;
 
 namespace DocumentManagement.Api.Features.Documents.Adrese;
 
-public sealed class AdresaService : IAdresaService
+public sealed class AdresaService(ILogger<AdresaService> logger) : IAdresaService
 {
-    private readonly ILogger<DocumentsController> _logger;
+    private readonly ILogger<AdresaService> _logger = logger;
     //Simuleaza o baza de date sau un repository
-    private List<Adresa> _adrese;
-
-    public AdresaService(ILogger<DocumentsController> logger)
-    {
-        _logger = logger;
-        _adrese = new List<Adresa>();
-    }
+    private List<Adresa> _adrese = [];
 
     // Metode Owner
-    public async Task<Adresa> CreazaAdresaAsync(Giud ownerId)
+    public Adresa CreazaAdresa(Guid ownerId)
     {
-        var adresa = new Adresa (OwnerId = ownerId);
-        await _adrese.AddAsync(adresa);
+        var adresa = new Adresa { OwnerId = ownerId };
+        _adrese.Add(adresa);
 
-        _logger.LogInformation($"Adresa {adresa.Id} a fost creata de owner-ul {ownerId}")
+        _logger.LogInformation($"Adresa {adresa.Id} a fost creata de owner-ul {ownerId}");
+
+        return adresa;
     }
 
-    public async Task<bool> SemneazaAdresaOwnerAsync(Giud adresaId, Giud ownerId)
+    public bool SemneazaAdresaOwnerAsync(Guid adresaId, Guid ownerId)
     {
         var adresa = _adrese.FirstOrDefault(a => a.Id == adresaId && a.OwnerId == ownerId);
 
         if (adresa == null)
         {
             _logger.LogError($"Erroare: Adresa {adresaId} nu este gasita sau nu apartine owner-ului {ownerId}");
+
             return false;
         }
 
-        if (adresa.Status != AdresaStatus.Creat)
+        if (adresa.Status != StatusAdresa.Creat)
+        {
+
+        }
 
     }
 
+}
+
+public interface IAdresaService
+{
 }
