@@ -45,7 +45,7 @@ public class FileService
         return Results.Ok($"File uploaded successfully as {newFileName}.");
     }
 
-    public async Task<IResult> DownloadFileAsync(string fileName, CancellationToken cancellationToken)
+    public async Task<IResult> DownloadEncryptedFileAsync(string fileName, CancellationToken cancellationToken)
     {
         var filePath = Path.Combine(_uploadDirectory, fileName);
         if (!File.Exists(filePath))

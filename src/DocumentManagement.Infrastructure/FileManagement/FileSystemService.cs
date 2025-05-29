@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using FluentResults;
 ﻿using Ardalis.GuardClauses;
+using System.Text;
 
 namespace DocumentManagement.Infrastructure.FileManagement;
 internal class FileSystemService
@@ -32,12 +33,12 @@ internal class FileSystemService
     private static string GenerateRandomStructure(int maxDepth = 6)
     {
         var depth = new Random().Next(2, maxDepth);
-        var finalStructure = "";
+        var finalStructure = new StringBuilder();
         for (int i = 0; i < depth; i++)
         {
-            finalStructure += $"\\{Guid.NewGuid().ToString()[..8]}";
+            finalStructure.Append($"\\{Guid.NewGuid().ToString()[..8]}");
         }
-        return finalStructure;
+        return finalStructure.ToString();
     }
 
     // Write a file to the file store

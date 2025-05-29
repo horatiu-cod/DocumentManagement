@@ -14,7 +14,7 @@ public sealed class AdresaService(ILogger<AdresaService> logger) : IAdresaServic
         var adresa = new Adresa { OwnerId = ownerId };
         _adrese.Add(adresa);
 
-        _logger.LogInformation($"Adresa {adresa.Id} a fost creata de owner-ul {ownerId}");
+        _logger.LogInformation("Adresa {Adresa.Id} a fost creata de owner-ul {OwnerId}", adresa.Id, ownerId);
 
         return adresa;
     }
