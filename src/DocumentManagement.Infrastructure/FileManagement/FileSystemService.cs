@@ -41,35 +41,34 @@ internal class FileSystemService
     }
 
     // Write a file to the file store
-        public async Task<Result<string>> WriteFileToStore(MemoryStream memoryStream, string fileStore)
+    public async Task<Result<string>> WriteFileToStore(MemoryStream memoryStream, string fileStore)
+    {
+        try
         {
-            try
+            var randomFolder = GenerateRandomStructure(4);
+            var fileName = Guid.NewGuid().ToString() + ".dms";
+            var path = Path.Combine(fileStore, randomFolder);
+            var filePath = Path.Combine(SystemRootMain + path);
+            if (!Directory.Exists(filePath))
             {
-                var randomFolder = GenerateRandomStructure(4);
-                var fileName = Guid.NewGuid().ToString() + ".dms";
-                var path = Path.Combine(fileStore, randomFolder);
-                var filePath = Path.Combine(SystemRootMain + path);
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                }
-                else { }
-                var fullPath = Path.Combine(filePath, fileName);
-                FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write);
-
-                await Task.Run(() =>
-                {
-                    memoryStream.WriteTo(fileStream);
-                    fileStream.Close();
-                });
-
-                return Result.Ok(Path.Combine(path, fileName)).ToResult<string>();
+                Directory.CreateDirectory(filePath);
             }
-            catch (Exception e)
+            
+            var fullPath = Path.Combine(filePath, fileName);
+            FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write);
+
+            await Task.Run(() =>
             {
-                Console.WriteLine(e.Message + e.StackTrace);
-                return Result.Fail ("An error occurred while trying to write a file to the file store.").ToResult<string>();
-            }
+                memoryStream.WriteTo(fileStream);
+                fileStream.Close();
+            });
 
+            return Result.Ok(Path.Combine(path, fileName)).ToResult<string>();
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message + e.StackTrace);
+            return Result.Fail ("An error occurred while trying to write a file to the file store.").ToResult<string>();
+        }
+    }
 }

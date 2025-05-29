@@ -1,13 +1,13 @@
 ﻿using DocumentManagement.Application.Interfaces;
 using DocumentManagement.Domain.Entities.Signatures;
-using DocumentManagement.Infrastructure.DataAccess.SignaturesContext;
+using DocumentManagement.Infrastructure.DataAccess.DocumentManagementContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocumentManagement.Infrastructure.DataAccess.Repository
 {
-    public class SignatureRepository(SignatureDbContext context) : ISignatureRepository
+    public class SignatureRepository(DocumentManagementDbContext context) : ISignatureRepository
     {
-        private readonly SignatureDbContext _context = context;
+        private readonly DocumentManagementDbContext _context = context;
 
         public async Task<Signature?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
@@ -26,6 +26,11 @@ namespace DocumentManagement.Infrastructure.DataAccess.Repository
 
         public async Task UpdateAsync(Signature entity)
         {
+            // Attach the entity to the context if it's not already tracked
+            if (_context.Entry(entity).State == EntityState.Detached)
+            {
+                _context.Signatures.Attach(entity);
+            }
             _context.Entry(entity).State = EntityState.Modified;
             await Task.CompletedTask;
         }
@@ -33,6 +38,7 @@ namespace DocumentManagement.Infrastructure.DataAccess.Repository
         public async Task DeleteAsync(Guid id)
         {
             var entity = await _context.Signatures.FindAsync(id);
+            // Check if the entity is not null before attempting to remove it
             if (entity != null)
             {
                 _context.Signatures.Remove(entity);

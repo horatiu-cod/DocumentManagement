@@ -1,6 +1,6 @@
 ﻿using DocumentManagement.Application.Interfaces;
+using DocumentManagement.Infrastructure.DataAccess.DocumentManagementContext;
 using DocumentManagement.Infrastructure.DataAccess.Repository;
-using DocumentManagement.Infrastructure.DataAccess.SignaturesContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +13,7 @@ namespace DocumentManagement.Infrastructure
         {
             ArgumentNullException.ThrowIfNull(connection);
 
-            services.AddDbContext<SignatureDbContext>(options =>
+            services.AddDbContext<DocumentManagementDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString(connection));
             });

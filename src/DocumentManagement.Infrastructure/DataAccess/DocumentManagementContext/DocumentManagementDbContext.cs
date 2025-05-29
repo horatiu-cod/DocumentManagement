@@ -4,9 +4,9 @@ using DocumentManagement.Domain.Entities.Employees;
 using DocumentManagement.Domain.Entities.Signatures;
 using Microsoft.EntityFrameworkCore;
 
-namespace DocumentManagement.Infrastructure.DataAccess.SignaturesContext
+namespace DocumentManagement.Infrastructure.DataAccess.DocumentManagementContext
 {
-    public class SignatureDbContext(DbContextOptions<SignatureDbContext> options) : DbContext(options), IUnitOfWork
+    public class DocumentManagementDbContext(DbContextOptions<DocumentManagementDbContext> options) : DbContext(options), IUnitOfWork
     {
         public DbSet<DocumentEntity> Documents { get; set; }
         public DbSet<Employee> Employees { get; set; }

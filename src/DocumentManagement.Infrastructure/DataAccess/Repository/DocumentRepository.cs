@@ -1,13 +1,13 @@
 ﻿using DocumentManagement.Application.Interfaces;
 using DocumentManagement.Domain.Entities.Documents;
-using DocumentManagement.Infrastructure.DataAccess.SignaturesContext;
+using DocumentManagement.Infrastructure.DataAccess.DocumentManagementContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocumentManagement.Infrastructure.DataAccess.Repository
 {
-    public class DocumentRepository(SignatureDbContext context) : IDocumentRepository
+    public class DocumentRepository(DocumentManagementDbContext context) : IDocumentRepository
     {
-        private readonly SignatureDbContext _context = context;
+        private readonly DocumentManagementDbContext _context = context;
 
         public async Task<DocumentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
