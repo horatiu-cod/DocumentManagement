@@ -6,7 +6,7 @@ public sealed class AdresaService(ILogger<AdresaService> logger) : IAdresaServic
 {
     private readonly ILogger<AdresaService> _logger = logger;
     //Simuleaza o baza de date sau un repository
-    private List<Adresa> _adrese = [];
+    private readonly List<Adresa> _adrese = [];
 
     // Metode Owner
     public Adresa CreazaAdresa(Guid ownerId)
@@ -14,7 +14,7 @@ public sealed class AdresaService(ILogger<AdresaService> logger) : IAdresaServic
         var adresa = new Adresa { OwnerId = ownerId };
         _adrese.Add(adresa);
 
-        _logger.LogInformation("Adresa {Adresa.Id} a fost creata de owner-ul {OwnerId}", adresa.Id, ownerId);
+        _logger.LogInformation("Adresa {AdresaId} a fost creata de owner-ul {OwnerId}", adresa.Id, ownerId);
 
         return adresa;
     }
@@ -32,7 +32,7 @@ public sealed class AdresaService(ILogger<AdresaService> logger) : IAdresaServic
 
         if (adresa.Status != StatusAdresa.Creat || adresa.Status != StatusAdresa.Aprobat || !adresa.Editable)
         {
-            _logger.LogError("Erroare: Adresa {AdresaId} nu poate fi semnata in starea curenta {Adresa.Status} sau nu este in editare", adresaId, adresa.Status);
+            _logger.LogError("Erroare: Adresa {AdresaId} nu poate fi semnata in starea curenta {AdresaStatus} sau nu este in editare", adresaId, adresa.Status);
 
             return false;
         }

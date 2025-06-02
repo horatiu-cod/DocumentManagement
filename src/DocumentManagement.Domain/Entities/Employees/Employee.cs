@@ -9,6 +9,6 @@ public class Employee
     public required string Email { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
-    public ICollection<DocumentEntity>? Documents { get; set; }
+    public ICollection<Document>? Documents { get; set; }
     public ICollection<Signature>? Signatures { get; set; }
 }

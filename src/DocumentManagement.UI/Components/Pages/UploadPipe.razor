@@ -1,0 +1,170 @@
+﻿@page "/upload-pipe"
+@using System.IO
+@using System.Buffers
+@using System.Net.Http.Headers
+@inject HttpClient Http
+
+<h1 class="mb-4">Blazor Server File Upload</h1>
+
+<!-- Alert message display -->
+<div class="@AlertClass" role="alert">
+    @AlertMessage
+</div>
+
+<!-- Progress bar for file upload -->
+<div class="progress mb-3" style="height: 20px;">
+    <div class="progress-bar" role="progressbar" style="width: @ProgressPercentage%;" aria-valuenow="@ProgressPercentage" aria-valuemin="0" aria-valuemax="100">@ProgressPercentage% Complete</div>
+</div>
+
+<!-- File upload form -->
+<form @onsubmit="OnSubmitAsync" class="needs-validation" novalidate>
+    <div class="input-group mb-3">
+        <InputFile @key="InputFileId" class="form-control" id="inputFile" OnChange="OnInputFileChange" aria-describedby="uploadButton" required />
+        <button class="btn btn-primary" type="submit" id="uploadButton" disabled="@IsUploadDisabled">
+            <span class="oi oi-cloud-upload" aria-hidden="true"></span> Upload Selected File
+        </button>
+    </div>
+    <div class="invalid-feedback">
+        Please select a file to upload.
+    </div>
+</form>
+
+@code {
+    // Constants for file size and allowed extensions
+    private const long MaxFileSize = 5L * 1024L * 1024L; // 5 MB
+    private static readonly string[] AllowedExtensions = { ".zip", ".rar", ".bin" };
+
+    // Properties for UI state management
+    private MarkupString AlertMessage { get; set; } = new("<strong>No file selected</strong>");
+    private string AlertClass { get; set; } = "alert alert-info";
+    private int ProgressPercentage { get; set; }
+    private IBrowserFile? SelectedFile { get; set; }
+    private bool IsUploadDisabled { get; set; } = true;
+    private Guid InputFileId { get; set; } = Guid.NewGuid();
+
+    // Handle file selection
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.GetMultipleFiles().FirstOrDefault();
+        ProgressPercentage = 0;
+        IsUploadDisabled = true;
+
+        // Validate selected file
+        if (SelectedFile is null)
+        {
+            SetAlert("alert alert-warning", "bi bi-warning", "No file selected.");
+            return;
+        }
+
+        if (SelectedFile.Size > MaxFileSize)
+        {
+            SetAlert("alert alert-danger", "bi bi-ban", $"File size exceeds the limit. Maximum allowed size is <strong>{MaxFileSize / (1024 * 1024)} MB</strong>.");
+            return;
+        }
+
+        string fileExtension = Path.GetExtension(SelectedFile.Name).ToLowerInvariant();
+        if (!AllowedExtensions.Contains(fileExtension))
+        {
+            SetAlert("alert alert-danger", "bi bi-warning", $"Invalid file type. Allowed file types are <strong>{string.Join(", ", AllowedExtensions)}</strong>.");
+            return;
+        }
+
+        SetAlert("alert alert-info", "bi bi-info", $"<strong>{SelectedFile.Name}</strong> ({SelectedFile.Size} bytes) file selected.");
+        IsUploadDisabled = false;
+    }
+
+    // Handle file upload
+    private async Task OnSubmitAsync()
+    {
+        if (SelectedFile is null) return;
+
+        IsUploadDisabled = true;
+        ProgressPercentage = 0;
+        StateHasChanged();
+
+        var content = new MultipartFormDataContent();
+
+        // Use a pipe to stream directly to StreamContent
+        var pipe = new System.IO.Pipelines.Pipe();
+        var fileContent = new StreamContent(pipe.Reader.AsStream());
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(SelectedFile.ContentType.ToString());
+        content.Add(fileContent, "file", SelectedFile.Name);
+
+        var uploadTask = Task.Run(async () =>
+        {
+            try
+            {
+                await using var fileStream = SelectedFile.OpenReadStream(MaxFileSize);
+                var writer = pipe.Writer;
+                const int bufferSize = 512 * 1024;
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                long totalBytesRead = 0;
+                long fileSize = SelectedFile.Size;
+                int bytesRead;
+                try
+                {
+                    while ((bytesRead = await fileStream.ReadAsync(buffer)) != 0)
+                    {
+                        await writer.WriteAsync(buffer.AsMemory(0, bytesRead));
+                        totalBytesRead += bytesRead;
+                        ProgressPercentage = (int)(100 * totalBytesRead / fileSize);
+                        await InvokeAsync(StateHasChanged);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                    await writer.CompleteAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                await pipe.Writer.CompleteAsync(ex);
+                throw;
+            }
+        });
+
+        try
+        {
+            var response = await Http.PostAsync("/upload", content);
+
+            await uploadTask; // Ensure file stream is finished
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+                ProgressPercentage = 100;
+                SetAlert("alert alert-success", "bi bi-check", $"<strong>Fișierul '{result?.FileName}'</strong> ({SelectedFile.Size} bytes) a fost încărcat cu succes!");
+            }
+            else
+            {
+                ProgressPercentage = 0;
+                SetAlert("alert alert-danger", "bi bi-cloud-slash", $"<strong>Fișierul '{SelectedFile.Name}'</strong>; Eroare la upload!");
+            }
+        }
+        catch (Exception ex)
+        {
+            ProgressPercentage = 0;
+            SetAlert("alert alert-danger", "bi bi-exclamation-triangle", $"Unexpected error: {ex.Message}");
+        }
+        finally
+        {
+            InputFileId = Guid.NewGuid(); // Reset file input
+            IsUploadDisabled = true;
+            StateHasChanged();
+        }
+    }
+
+    // Helper method to set alert message and style
+    private void SetAlert(string alertClass, string iconClass, string message)
+    {
+        AlertClass = alertClass;
+        AlertMessage = new MarkupString($"<span class='{iconClass}' aria-hidden='true'></span> {message}");
+    }
+
+    public class UploadResult
+    {
+        public string FileName { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace DocumentManagement.Api.Services;
+namespace DocumentManagement.Api.Features.Files;
 
 public class FileService
 {

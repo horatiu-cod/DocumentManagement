@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.Api", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.Infrastructure", "src\DocumentManagement.Infrastructure\DocumentManagement.Infrastructure.csproj", "{DF8E9B16-4EA2-4EB2-A6B0-78C333DD5619}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.UI", "src\DocumentManagement.UI\DocumentManagement.UI.csproj", "{89B07D68-5B87-4906-B963-01564404ADE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{DF8E9B16-4EA2-4EB2-A6B0-78C333DD5619}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF8E9B16-4EA2-4EB2-A6B0-78C333DD5619}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF8E9B16-4EA2-4EB2-A6B0-78C333DD5619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B07D68-5B87-4906-B963-01564404ADE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B07D68-5B87-4906-B963-01564404ADE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B07D68-5B87-4906-B963-01564404ADE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B07D68-5B87-4906-B963-01564404ADE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{0F79D6CF-8239-4388-A3B4-9C56E185FAD7} = {C8AA1160-0E87-4811-9FC5-8BA2DC51629C}
 		{C2FF65CF-DBC4-401E-886B-746254A52739} = {C8AA1160-0E87-4811-9FC5-8BA2DC51629C}
 		{DF8E9B16-4EA2-4EB2-A6B0-78C333DD5619} = {C8AA1160-0E87-4811-9FC5-8BA2DC51629C}
+		{89B07D68-5B87-4906-B963-01564404ADE8} = {C8AA1160-0E87-4811-9FC5-8BA2DC51629C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38155EA4-D34B-4B30-8508-84B12088A6B3}

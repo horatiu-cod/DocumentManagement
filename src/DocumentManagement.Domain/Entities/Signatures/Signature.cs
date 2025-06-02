@@ -13,5 +13,5 @@ public class Signature
     public required Employee Employee { get; set; }
 
     public Guid IssuedFor { get; set; }
-    public required DocumentEntity Document { get; set; }
+    public required Document Document { get; set; }
 }

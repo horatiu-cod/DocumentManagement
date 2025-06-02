@@ -9,34 +9,34 @@ namespace DocumentManagement.Infrastructure.DataAccess.Repository
     {
         private readonly DocumentManagementDbContext _context = context;
 
-        public async Task<DocumentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Documents.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
-        public async Task<DocumentEntity?> GetByIdWithSignaturesAndEmployeeAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Document?> GetByIdWithSignaturesAndEmployeeAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Documents.Include(x => x.Employee).Include(x => x.Signatures).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task<List<DocumentEntity>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<List<Document>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _context.Documents.Include(x => x.Employee).Include(x => x.Signatures).ToListAsync(cancellationToken);
         }
 
-        public async Task AddAsync(DocumentEntity entity, CancellationToken cancellationToken)
+        public async Task AddAsync(Document entity, CancellationToken cancellationToken)
         {
             await _context.Documents.AddAsync(entity, cancellationToken);
         }
 
-        public async Task<DocumentEntity?> GetByIdWithSignaturesAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Document?> GetByIdWithSignaturesAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Documents.Include(x => x.Signatures).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
-        public async Task<DocumentEntity?> GetByIdWithEmployeeAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<Document?> GetByIdWithEmployeeAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Documents.Include(x => x.Employee).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
-        public async Task UpdateAsync(DocumentEntity entity, CancellationToken cancellationToken)
+        public async Task UpdateAsync(Document entity, CancellationToken cancellationToken)
         {
             // Attach the entity to the context if it's not already tracked
             if (_context.Entry(entity).State == EntityState.Detached)
