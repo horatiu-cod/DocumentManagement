@@ -2,7 +2,11 @@
 @using System.IO
 @using System.Buffers
 @using System.Net.Http.Headers
+@using DocumentManagement.Domain.Options
+@using Microsoft.Extensions.Options
+@using DocumentManagement.Application
 @inject HttpClient Http
+
 
 <h1 class="mb-4">Blazor Server File Upload</h1>
 
@@ -31,7 +35,10 @@
 
 @code {
     // Constants for file size and allowed extensions
-    private const long MaxFileSize = 5L * 1024L * 1024L; // 5 MB
+    [Inject]
+    public IOptions<FilesOptions>? Options {get; set; }
+     int MaxFileSize = Options.Value.MaxFileSizeInMB;
+    //private const long MaxFileSize = 5L * 1024L * 1024L; // 5 MB
     private static readonly string[] AllowedExtensions = { ".zip", ".rar", ".bin" };
 
     // Properties for UI state management
@@ -86,8 +93,9 @@
 
         // Use a pipe to stream directly to StreamContent
         var pipe = new System.IO.Pipelines.Pipe();
-        var fileContent = new StreamContent(pipe.Reader.AsStream());
-        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(SelectedFile.ContentType.ToString());
+    using Microsoft.Extensions.Options;
+#line default
+    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(SelectedFile.ContentType.ToString());
         content.Add(fileContent, "file", SelectedFile.Name);
 
         var uploadTask = Task.Run(async () =>
@@ -126,14 +134,15 @@
 
         try
         {
-            var response = await Http.PostAsync("/upload", content);
-
             await uploadTask; // Ensure file stream is finished
+
+            var response = await Http.PostAsync("/upload", content);
 
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<UploadResult>();
                 ProgressPercentage = 100;
+                StateHasChanged();
                 SetAlert("alert alert-success", "bi bi-check", $"<strong>Fișierul '{result?.FileName}'</strong> ({SelectedFile.Size} bytes) a fost încărcat cu succes!");
             }
             else
