@@ -6,6 +6,7 @@
 @using Microsoft.Extensions.Options
 @using DocumentManagement.Application
 @inject HttpClient Http
+@inject IOptions<FilesOptions> Options
 
 
 <h1 class="mb-4">Blazor Server File Upload</h1>
@@ -35,11 +36,12 @@
 
 @code {
     // Constants for file size and allowed extensions
-    [Inject]
-    public IOptions<FilesOptions>? Options {get; set; }
-     int MaxFileSize = Options.Value.MaxFileSizeInMB;
+    //[Inject]
+    //public IOptions<FilesOptions>? Options { get; set; }
+
+    private int MaxFileSize => (Options?.Value?.MaxFileSizeInMB ?? 5) * 1024 * 1024; // Convert MB to bytes, default 5MB if not set
     //private const long MaxFileSize = 5L * 1024L * 1024L; // 5 MB
-    private static readonly string[] AllowedExtensions = { ".zip", ".rar", ".bin" };
+    private string[] AllowedExtensions => Options?.Value?.AllowedFileExtensions ?? new[] { ".pdf", "PDF" };
 
     // Properties for UI state management
     private MarkupString AlertMessage { get; set; } = new("<strong>No file selected</strong>");
@@ -93,9 +95,8 @@
 
         // Use a pipe to stream directly to StreamContent
         var pipe = new System.IO.Pipelines.Pipe();
-    using Microsoft.Extensions.Options;
-#line default
-    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(SelectedFile.ContentType.ToString());
+        var fileContent = new StreamContent(pipe.Reader.AsStream());
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(SelectedFile.ContentType.ToString());
         content.Add(fileContent, "file", SelectedFile.Name);
 
         var uploadTask = Task.Run(async () =>

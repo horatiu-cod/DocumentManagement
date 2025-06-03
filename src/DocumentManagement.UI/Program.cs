@@ -1,9 +1,11 @@
+using DocumentManagement.Application.Configuration;
 using DocumentManagement.UI.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
+builder.Services.AddCore(builder.Configuration);
 
 var app = builder.Build();
 
