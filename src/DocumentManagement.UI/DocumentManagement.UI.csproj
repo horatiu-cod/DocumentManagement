@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+
+  
+
   <ItemGroup>
     <ProjectReference Include="../DocumentManagement.Application/DocumentManagement.Application.csproj" />
   </ItemGroup>

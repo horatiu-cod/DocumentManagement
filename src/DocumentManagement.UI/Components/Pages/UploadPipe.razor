@@ -36,9 +36,9 @@
 
 @code {
   
-    private int MaxFileSize => (Options?.Value?.MaxFileSizeInMB ?? 5) * 1024 * 1024; // Convert MB to bytes, default 5MB if not set
+    private long MaxFileSize => (Options?.Value?.MaxFileSizeInMB ?? 5) * 1024 * 1024; // Convert MB to bytes, default 5MB if not set
     //private const long MaxFileSize = 5L * 1024L * 1024L; // 5 MB
-    private string[] AllowedExtensions => Options?.Value?.AllowedFileExtensions ?? new[] { ".pdf", "PDF" };
+    private string[] AllowedExtensions => Options?.Value?.AllowedFileExtensions ?? new[] { ".pdf", ".PDF" };
 
     // Properties for UI state management
     private MarkupString AlertMessage { get; set; } = new("<strong>No file selected</strong>");
