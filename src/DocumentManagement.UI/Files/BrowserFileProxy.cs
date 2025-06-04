@@ -6,7 +6,7 @@ namespace DocumentManagement.UI.Files;
 
 public class BrowserFileProxy(IBrowserFile browserFile) : IFileProxy
 {
-    private readonly IBrowserFile _browserFile ?? throw new 
+    private readonly IBrowserFile _browserFile;
     public string FileName => _browserFile.Name;
 
     public string ContentType => browserFile.ContentType;
@@ -15,9 +15,11 @@ public class BrowserFileProxy(IBrowserFile browserFile) : IFileProxy
 
     public long Length => browserFile.Size;
 
-    public Task CopyToAsync(Stream target, CancellationToken cancellationToken = default)
+    public async Task CopyToAsync(Stream target, CancellationToken cancellationToken = default)
     {
-        await 
+        var s = _browserFile.OpenReadStream(_browserFile.Size);
+
+        await s.CopyToAsync(target);
     }
 
     public Task<byte[]> GetData(CancellationToken cancellationToken = default)
