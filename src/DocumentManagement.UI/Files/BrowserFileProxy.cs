@@ -17,13 +17,15 @@ public class BrowserFileProxy(IBrowserFile browserFile) : IFileProxy
 
     public async Task CopyToAsync(Stream target, CancellationToken cancellationToken = default)
     {
-        var s = _browserFile.OpenReadStream(_browserFile.Size);
+        using var s = _browserFile.OpenReadStream(_browserFile.Size);
 
-        await s.CopyToAsync(target);
+        await s.CopyToAsync(target, cancellationToken);
     }
 
-    public Task<byte[]> GetData(CancellationToken cancellationToken = default)
+    public async Task<byte[]> GetData(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        using var memoryStream = new MemoryStream();
+        await  _browserFile.OpenReadStream(_browserFile.Size).CopyToAsync(memoryStream, cancellationToken);
+        return memoryStream.ToArray();
     }
 }
