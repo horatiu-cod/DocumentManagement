@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using FluentResults;
-﻿using Ardalis.GuardClauses;
+using Ardalis.GuardClauses;
 using System.Text;
 
 namespace DocumentManagement.Infrastructure.FileManagement;
