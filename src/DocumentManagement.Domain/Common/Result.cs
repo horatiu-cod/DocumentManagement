@@ -16,6 +16,8 @@ internal record Result<TData>(TData? Content, bool IsSuccess, HttpStatusCode? St
     public static Result<TData> Success(TData? content) => new(content, true, null, null);
     public static Result<TData> Success(TData? content, HttpStatusCode? StatusCode) => new(content, true, StatusCode, null);
 
+    public static Result<TData> Exception() => new Exception();
+
     public static implicit operator Result<TData>(Exception exception)
     {
         return exception;
