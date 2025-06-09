@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Logging;
-using FluentResults;
+//using FluentResults;
 using Ardalis.GuardClauses;
 using System.Text;
+using DocumentManagement.Domain.Common;
 
 namespace DocumentManagement.Infrastructure.FileManagement;
 internal class FileSystemService
@@ -32,9 +33,9 @@ internal class FileSystemService
         }
     }
      // Initialize the file store by generating a random folder structure
-    public static string InitializeFileStore(int maxDepth = 6)
+    public static string InitializeFileStore(int SMIS)
     {
-        var fileStore = GenerateRandomStructure(maxDepth);
+        var fileStore = GenerateRandomStructure(SMIS);
         return fileStore;
     }
 
@@ -69,12 +70,12 @@ internal class FileSystemService
                 memoryStream.WriteTo(fileStream);
                 fileStream.Close();
 
-            return Result.Ok(Path.Combine(path, fileName)).ToResult<string>();
+            return Result<string>.Success(Path.Combine(path, fileName));
         }
         catch (Exception e)
         {
             _logger.LogError(e, "{Message}, {StackTrace}" , e.Message, e.StackTrace);
-            return Result.Fail ("An error occurred while trying to write a file to the file store.").ToResult<string>();
+            return Result.Fail (["An error occurred while trying to write a file to the file store.", e.Message]);
         }
     }
 
@@ -86,7 +87,7 @@ internal class FileSystemService
             var fullPath = Path.Combine(_systemRootMain, fileStore, filePath);
             if (!File.Exists(fullPath))
             {
-                return Result.Fail("File not found in the store.").ToResult<MemoryStream>();
+                return Result.Fail("File not found in the store.");
             }
             var memoryStream = new MemoryStream();
             using (var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
@@ -94,12 +95,12 @@ internal class FileSystemService
                 fileStream.CopyTo(memoryStream);
             }
             memoryStream.Position = 0; // Reset stream position to the beginning
-            return Result.Ok(memoryStream).ToResult<MemoryStream>();
+            return Result<MemoryStream>.Success(memoryStream);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "{Message}, {StackTrace}", e.Message, e.StackTrace);
-            return Result.Fail("An error occurred while trying to read a file from the file store.").ToResult<MemoryStream>();
+            return Result.Fail(["An error occurred while trying to read a file from the file store.", e.Message]);
         }
     }
 }
