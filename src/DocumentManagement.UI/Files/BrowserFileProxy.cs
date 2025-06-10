@@ -18,7 +18,6 @@ public class BrowserFileProxy(IBrowserFile browserFile) : IFileProxy
     public async Task CopyToAsync(Stream target, CancellationToken cancellationToken = default)
     {
         using var s = _browserFile.OpenReadStream(_browserFile.Size, cancellationToken);
-
         await s.CopyToAsync(target, cancellationToken);
     }
 

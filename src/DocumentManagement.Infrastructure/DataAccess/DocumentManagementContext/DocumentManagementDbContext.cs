@@ -1,4 +1,5 @@
 ﻿using DocumentManagement.Application.Interfaces;
+using DocumentManagement.Domain.Entities;
 using DocumentManagement.Domain.Entities.Documents;
 using DocumentManagement.Domain.Entities.Employees;
 using DocumentManagement.Domain.Entities.Signatures;
@@ -39,6 +40,10 @@ namespace DocumentManagement.Infrastructure.DataAccess.DocumentManagementContext
             base.OnModelCreating(modelBuilder);
         }
 
-        public async Task CommitChangesAsync(CancellationToken cancellationToken = default) => await SaveChangesAsync(cancellationToken);
+        public async Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var result = await base.SaveChangesAsync(cancellationToken);
+            return result;
+        }
     }
 }
