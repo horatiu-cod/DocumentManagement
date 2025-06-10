@@ -42,3 +42,6 @@ Verificare -> Descărcat de pe server -> nume -> decodat Base64
                                             >	extensie fișier -> este admisibil
                                             >	mărime fișier -> e in limite ( nu e null sau prea mare)
                                             >	creare checksum
+
+
+https://github.com/MuhammadrizoVositov/FileExplorer.API/tree/master
