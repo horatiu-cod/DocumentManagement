@@ -1,9 +1,3 @@
-﻿using DocumentManagement.Domain.Steps;
+﻿namespace DocumentManagement.Domain.WorkFlows.Models;
 
-namespace DocumentManagement.Domain.WorkFlows.Models;
-
-internal sealed record WorkFlowsForCreation
-{
-    public string Name { get; set; }
-    //public List<Step> Steps { get; set; } = new();
-}
+internal sealed record WorkFlowsForCreation(string Name);

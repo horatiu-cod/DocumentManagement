@@ -29,11 +29,28 @@ internal class WorkFlow : BaseEntity
 
     // Add Props Marker -- Deleting this comment will cause the add props utility to be incomplete
 
-    public WorkFlow AddStep(Step step, int stepAssignmentCount)
+    public WorkFlow AddStep(Step step)
     {
+        int stepAssignmentCount = 1;
+        if (_steps.Any())
+        {
+            stepAssignmentCount = _steps.Count() + 1;
+        }
+
         var stepAssignment = StepsAssignment.Create(step, stepAssignmentCount);
         _steps.Add(stepAssignment);
-        UpdateSteps(_steps);
+        //UpdateSteps(_steps);
+        return this;
+    }
+
+    public WorkFlow AddSteps(IList<Step> steps, int stepAssignmentCount)
+    {
+        foreach (var step in steps)
+        {
+            var stepAssignment = StepsAssignment.Create(step, stepAssignmentCount);
+            _steps.Add(stepAssignment);
+        }
+        //UpdateSteps(_steps);
         return this;
     }
 
