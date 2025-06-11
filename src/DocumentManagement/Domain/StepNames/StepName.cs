@@ -46,48 +46,60 @@ public abstract class StepNameEnum : SmartEnum<StepNameEnum>
     public static readonly StepNameEnum AtContracting = new AtContractingName();
     public static readonly StepNameEnum AtGeneralManager = new AtGeneralManagerName();
 
+    public abstract bool CanStepToNext(StepNameEnum next);
+  
 
     private StepNameEnum(string name, int value) : base(name, value)
     {
     }
 
-    public class AtMonitoringName : StepNameEnum
+    private sealed class AtMonitoringName : StepNameEnum
     {
+        public AtMonitoringName() : base("Monitoring", 1){}
+
+        public override bool CanStepToNext(StepNameEnum next) => next == AtAccounting || next == AtOwner || next == AtContracting || next == AtLegal || next == AtGeneralManager || next == AtPurchasing || next == AtManager;
     }
 
-    public class AtAccountingName : StepNameEnum
+    private sealed class AtAccountingName : StepNameEnum
     {
-        public 
+        public AtAccountingName() : base("Accounting", 2) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtContracting;
     }
 
-    public class AtLegalName : StepNameEnum
+    private sealed class AtLegalName : StepNameEnum
     {
+        public AtLegalName() : base("Legal", 5) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtManager;
+
     }
 
-    private class AtPurchasingName : StepNameEnum
+    private sealed class AtPurchasingName : StepNameEnum
     {
-        public AtPurchasingName() : base("Purchasing", 4){}
+        public AtPurchasingName() : base("Purchasing", 4) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtManager;
     }
 
     private sealed class AtManagerName : StepNameEnum
     {
-        public AtManagerName() : base("Manager", 7){}
+        public AtManagerName() : base("Manager", 7) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtGeneralManager;
     }
 
     private sealed class AtContractingName : StepNameEnum
     {
-        public AtContractingName() : base("Contracting", 3){}
+        public AtContractingName() : base("Contracting", 3) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtManager;
     }
 
     private sealed class AtGeneralManagerName : StepNameEnum
     {
-       public AtGeneralManagerName() : base("GeneralManager", 8){}
+        public AtGeneralManagerName() : base("GeneralManager", 8) { }
+        public override bool CanStepToNext(StepNameEnum next) => next == AtOwner;
     }
 
     private class AtOwnerName : StepNameEnum
     {
-        public AtOwnerName() : base("Owner", 0)
-        {
-        }
-    }
+        public AtOwnerName() : base("Owner", 0){}
+        public override bool CanStepToNext(StepNameEnum next) => next == AtMonitoring;
+   }
 }

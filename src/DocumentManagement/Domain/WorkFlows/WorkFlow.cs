@@ -44,6 +44,11 @@ internal class WorkFlow : BaseEntity
         {
             return this;
         }
+        if (stepAssignment.StepCount > 1)
+        {
+            stepAssignment.UpdateStepCount(stepAssignment.StepCount - 1);
+            return this;
+        }
         stepAssignment.UpdateStepCount(stepAssignment.StepCount - 1);
         _steps.Remove(stepAssignment);
         UpdateSteps(_steps);

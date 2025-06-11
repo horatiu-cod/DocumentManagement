@@ -4,5 +4,6 @@ namespace DocumentManagement.Domain.Steps;
 
 internal class Step : BaseEntity
 {
-    public StepName? StepName { get; set; }  
+    public StepName StepName { get; set; } = StepName.AtOwner();
+
 }
