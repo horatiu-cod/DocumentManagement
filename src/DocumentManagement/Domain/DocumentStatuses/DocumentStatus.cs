@@ -4,10 +4,10 @@ namespace DocumentManagement.Domain.DocumentStatuses;
 
 internal class DocumentStatus : ValueObject
 {
-    private DocumentStatusEnum _status;
+    private DocumentStatusEnum? _status;
     public string Value
     {
-        get => _status.Name;
+        get => _status?.Name ?? string.Empty;
         private set
         {
             if (!DocumentStatusEnum.TryFromName(value, true, out var parsed))
@@ -20,7 +20,6 @@ internal class DocumentStatus : ValueObject
     {
         Value = value;
     }
-
     public static DocumentStatus Of(string value) => new(value);
     public static implicit operator string(DocumentStatus value) => value.Value;
     public static List<string> ListNames() => DocumentStatusEnum.List.Select(x => x.Name).ToList();
