@@ -8,7 +8,7 @@ internal class WorkFlow : BaseEntity
 {
     public string Name { get; private set; } = string.Empty;
     public int Version { get; private set; }
-    public WorkFlowStatus Status { get; private set; } = WorkFlowStatus.Started;
+    public WorkFlowStatusEnum Status { get; private set; } = WorkFlowStatusEnum.Inactive;
 
     private readonly List<StepsAssignment> _steps  = [];
     public IReadOnlyCollection<StepsAssignment> Steps => _steps.AsReadOnly();
@@ -29,28 +29,11 @@ internal class WorkFlow : BaseEntity
 
     // Add Props Marker -- Deleting this comment will cause the add props utility to be incomplete
 
-    public WorkFlow AddStep(Step step)
+    public WorkFlow AddStep(Step step, int stepAssignmentCount)
     {
-        int stepAssignmentCount = 1;
-        if (_steps.Any())
-        {
-            stepAssignmentCount = _steps.Count() + 1;
-        }
-
         var stepAssignment = StepsAssignment.Create(step, stepAssignmentCount);
         _steps.Add(stepAssignment);
-        //UpdateSteps(_steps);
-        return this;
-    }
-
-    public WorkFlow AddSteps(IList<Step> steps, int stepAssignmentCount)
-    {
-        foreach (var step in steps)
-        {
-            var stepAssignment = StepsAssignment.Create(step, stepAssignmentCount);
-            _steps.Add(stepAssignment);
-        }
-        //UpdateSteps(_steps);
+        UpdateSteps(_steps);
         return this;
     }
 
@@ -61,14 +44,9 @@ internal class WorkFlow : BaseEntity
         {
             return this;
         }
-        if (stepAssignment.StepCount > 1)
-        {
-            stepAssignment.UpdateStepCount(stepAssignment.StepCount - 1);
-            return this;
-        }
         stepAssignment.UpdateStepCount(stepAssignment.StepCount - 1);
         _steps.Remove(stepAssignment);
-        UpdateSteps(_steps);
+        //UpdateSteps(_steps)
         return this;
     }
     private void UpdateSteps(IList<StepsAssignment> updates)
