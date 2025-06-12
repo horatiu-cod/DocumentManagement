@@ -8,7 +8,7 @@ internal interface IWorkFlowService
     Result<WorkFlow> GoNextStep(WorkFlow workFlow);
 }
 
-internal class WorkFlowService 
+internal class WorkFlowService : IWorkFlowService
 {
     public static Result<bool> CanGoNext() => Result<bool>.Success(true);
 
@@ -20,13 +20,14 @@ internal class WorkFlowService
         if(workFlow.Steps.Count == 1)
             return Result<StepsAssignment>.Success(workFlow.Steps.First());
 
-        var list = workFlow.Steps.Where(s => s.StepIndex != 0).Select(s => s);
-        var actualStep = workFlow.Steps.Aggregate((current, next) => current.StepIndex <  next.StepIndex ? current : next);
+        var actualStep = workFlow.Steps.Where(s => s.StepIndex != 0).Select(s => s).Aggregate((current, next) => current.StepIndex < next.StepIndex ? current : next);
+        if (actualStep == null)
+            return Result.Fail("No valid next step found in workflow.");
 
         return Result<StepsAssignment>.Success(actualStep);
     }
 
-    public static Result<WorkFlow> GoNextStep(WorkFlow workFlow)
+    public Result<WorkFlow> GoNextStep(WorkFlow workFlow)
     {
         var nextStepResult = GetNextStep(workFlow);
         if (!nextStepResult.IsSuccess)
@@ -34,8 +35,11 @@ internal class WorkFlowService
             return Result.Fail(nextStepResult.Error!);
         }
         var nextStep = nextStepResult.Content ;
-        
-        var newWorkFlow = workFlow.RemovestepAssignment(nextStep!);
+        if (nextStep == null)
+        {
+            return Result.Fail("Next step is null.");
+        }
+        var newWorkFlow = workFlow.RemoveStepAssignment(nextStep);
         nextStep.UpdateStepCount(-nextStep.StepIndex);
         newWorkFlow = newWorkFlow.AddstepAssignment(nextStep);
         if (newWorkFlow == null)

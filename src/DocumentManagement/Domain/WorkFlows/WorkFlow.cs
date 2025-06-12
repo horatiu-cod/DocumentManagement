@@ -66,7 +66,7 @@ internal class WorkFlow : BaseEntity
         _steps.Add(stepsAssignment);
         return this;
     }
-    public WorkFlow RemovestepAssignment(StepsAssignment stepsAssignment)
+    public WorkFlow RemoveStepAssignment(StepsAssignment stepsAssignment)
     {
         var step = _steps.FirstOrDefault(stepsAssignment);
         if (step is not null)
