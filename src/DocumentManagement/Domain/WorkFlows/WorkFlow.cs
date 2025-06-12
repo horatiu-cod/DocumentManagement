@@ -10,7 +10,7 @@ internal class WorkFlow : BaseEntity
     public int Version { get; private set; }
     public WorkFlowStatusEnum Status { get; private set; } = WorkFlowStatusEnum.Inactive;
 
-    private readonly List<StepsAssignment> _steps  = [];
+    private readonly List<StepsAssignment> _steps = [];
     public IReadOnlyCollection<StepsAssignment> Steps => _steps.AsReadOnly();
 
     // Add Props Marker -- Deleting this comment will cause the add props utility to be incomplete
@@ -29,9 +29,9 @@ internal class WorkFlow : BaseEntity
 
     // Add Props Marker -- Deleting this comment will cause the add props utility to be incomplete
 
-    public WorkFlow AddStep(Step step, int stepAssignmentCount)
+    public WorkFlow AddStep(Step step, int stepAssignmentIndex)
     {
-        var stepAssignment = StepsAssignment.Create(step, stepAssignmentCount);
+        var stepAssignment = StepsAssignment.Create(step, stepAssignmentIndex);
         _steps.Add(stepAssignment);
         UpdateSteps(_steps);
         return this;
@@ -44,7 +44,7 @@ internal class WorkFlow : BaseEntity
         {
             return this;
         }
-        stepAssignment.UpdateStepCount(stepAssignment.StepCount - 1);
+        stepAssignment.UpdateStepCount(stepAssignment.StepIndex - 1);
         _steps.Remove(stepAssignment);
         //UpdateSteps(_steps)
         return this;
@@ -60,5 +60,17 @@ internal class WorkFlow : BaseEntity
 
         removals.ForEach(toRemove => _steps.Remove(toRemove));
         additions.ForEach(newStep => _steps.Add(newStep));
+    }
+    public WorkFlow AddstepAssignment(StepsAssignment stepsAssignment)
+    {
+        _steps.Add(stepsAssignment);
+        return this;
+    }
+    public WorkFlow RemovestepAssignment(StepsAssignment stepsAssignment)
+    {
+        var step = _steps.FirstOrDefault(stepsAssignment);
+        if (step is not null)
+            _steps.Remove(stepsAssignment);
+        return this;
     }
 }

@@ -13,10 +13,10 @@ public record Result(bool IsSuccess, IEnumerable<string>? Error, HttpStatusCode?
     public static Result Fail(IEnumerable<string> Errors, HttpStatusCode? StatusCode) => new(false, Errors, StatusCode);
 }
 
-public record Result<TData>(TData? Content, bool IsSuccess, HttpStatusCode? StatusCode, IEnumerable<string>? Error) //: Result( IsSuccess, Error, StatusCode )
+public record Result<TData>(TData Content, bool IsSuccess, HttpStatusCode? StatusCode, IEnumerable<string>? Error) //: Result( IsSuccess, Error, StatusCode )
 {
-    public static Result<TData> Success(TData? content) => new(content, true, null, null);
-    public static Result<TData> Success(TData? content, HttpStatusCode? StatusCode) => new(content, true, StatusCode, null);
+    public static Result<TData> Success(TData content) => new(content, true, null, null);
+    public static Result<TData> Success(TData content, HttpStatusCode? StatusCode) => new(content, true, StatusCode, null);
 
     public static implicit operator Result<TData>(Result result) =>
         new(default, result.IsSuccess, result.StatusCode, result.Error);
