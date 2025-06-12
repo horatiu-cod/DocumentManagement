@@ -7,22 +7,35 @@ namespace DocumentManagement.Domain.WorkFlows.Features;
 
 public static class AddWorkFlow
 {
-    public record AddWorkFlowCommand(
-        WorkFlowForCreationDto WorkFlowsForCreation,
+    public sealed record Command(
+        WorkFlowForCreationDto WorkFlowsToAdd,
         Guid UserId
     ) : ICommand<WorkFlowDto>;
 
-    public class AddWorkFlowCommandHandler : ICommandHandler<AddWorkFlowCommand, WorkFlowDto>
+    public sealed class Handler : ICommandHandler<Command, WorkFlowDto>
     {
-       private readonly ILogger<AddWorkFlowCommandHandler> _logger;
+       private readonly ILogger<Handler> _logger;
       
-        public AddWorkFlowCommandHandler(ILogger<AddWorkFlowCommandHandler> logger)
+        public Handler(ILogger<Handler> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public Task<WorkFlowDto> HandleAsync(AddWorkFlowCommand command, CancellationToken cancellationToken)
+        public async Task<WorkFlowDto> HandleAsync(Command command, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var workFlowToAdd = command.WorkFlowsToAdd.ToWorkFlowsForCreation();
+            var workFlow = WorkFlow.Create(
+                workFlowToAdd,
+                command.UserId
+            );
+            await Task.Yield();
+            _logger.LogInformation("Adding new workflow: {@WorkFlow}", workFlowToAdd);
+
+            // Here you would typically save the workFlow to a database or repository.
+            // For demonstration purposes, we will just return the mapped DTO.
+            var workFlowDto = workFlow.ToWorkFlowDto();
+            _logger.LogInformation("Workflow added successfully: {@WorkFlowDto}", workFlowDto);
+
+            return workFlowDto;
         }
     }
 }
